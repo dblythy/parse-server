@@ -198,6 +198,10 @@ export interface ParseServerOptions {
   :ENV: PARSE_SERVER_EXPERIMENTAL_IDEMPOTENCY_OPTIONS
   :DEFAULT: false */
   idempotencyOptions: ?IdempotencyOptions;
+  /* Options for timeout function tracking
+  :ENV: PARSE_SERVER_SLOW_TRACKING
+  :DEFAULT: false */
+  slowTracking: ?SlowTrackingOptions;
   /* Full path to your GraphQL custom schema.graphql file */
   graphQLSchema: ?string;
   /* Mounts the GraphQL endpoint
@@ -290,4 +294,9 @@ export interface IdempotencyOptions {
   /* The duration in seconds after which a request record is discarded from the database, defaults to 300s.
   :DEFAULT: 300 */
   ttl: ?number;
+}
+export interface SlowTrackingOptions {
+  /* interval which functions should timeout
+  :DEFAULT: 20000 */
+  timeout: ?number;
 }

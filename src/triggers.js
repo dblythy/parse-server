@@ -339,7 +339,19 @@ export function getResponseObject(request, resolve, reject) {
     },
   };
 }
-
+export function timeoutFunction(promise, config) {
+  if (!config.slowTracking || !config.slowTracking.timeout) {
+    return promise;
+  }
+  const timeout = config.slowTracking.timeout;
+  const timeoutPromise = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const error = new Parse.Error(Parse.Error.SCRIPT_FAILED, 'Script timed out.');
+      reject(error);
+    }, timeout);
+  });
+  return Promise.race([promise, timeoutPromise]);
+}
 function userIdForLog(auth) {
   return auth && auth.user ? auth.user.id : undefined;
 }

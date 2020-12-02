@@ -148,6 +148,18 @@ const defaultColumns: { [string]: SchemaFields } = Object.freeze({
     reqId: { type: 'String' },
     expire: { type: 'Date' },
   },
+  _SlowTracking: {
+    functionName: { type: 'String' },
+    params: { type: 'Object' },
+    timeTaken: { type: 'Number' },
+    events: { type: 'Array' },
+    result: { type: 'Boolean' },
+    error: { type: 'Object' },
+    user: { type: 'String' },
+    master: { type: 'Boolean' },
+    installationId: { type: 'String' },
+    context: { type: 'Object' },
+  },
 });
 
 const requiredColumns = Object.freeze({
@@ -166,6 +178,7 @@ const systemClasses = Object.freeze([
   '_JobSchedule',
   '_Audience',
   '_Idempotency',
+  '_SlowTracking',
 ]);
 
 const volatileClasses = Object.freeze([
@@ -177,6 +190,7 @@ const volatileClasses = Object.freeze([
   '_JobSchedule',
   '_Audience',
   '_Idempotency',
+  '_SlowTracking',
 ]);
 
 // Anything that start with role
@@ -640,6 +654,13 @@ const _IdempotencySchema = convertSchemaToAdapterSchema(
     classLevelPermissions: {},
   })
 );
+const _SlowTrackingSchema = convertSchemaToAdapterSchema(
+  injectDefaultSchema({
+    className: '_SlowTracking',
+    fields: defaultColumns._SlowTracking,
+    classLevelPermissions: {},
+  })
+);
 const VolatileClassesSchemas = [
   _HooksSchema,
   _JobStatusSchema,
@@ -649,6 +670,7 @@ const VolatileClassesSchemas = [
   _GraphQLConfigSchema,
   _AudienceSchema,
   _IdempotencySchema,
+  _SlowTrackingSchema,
 ];
 
 const dbTypeMatchesObjectType = (dbType: SchemaField | string, objectType: SchemaField) => {

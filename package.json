@@ -110,7 +110,7 @@
     "postinstall": "node -p 'require(\"./postinstall.js\")()'"
   },
   "engines": {
-    "node": ">= 8"
+    "node": ">= 8.5.0"
   },
   "bin": {
     "parse-server": "./bin/parse-server"

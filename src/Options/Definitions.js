@@ -127,7 +127,7 @@ module.exports.ParseServerOptions = {
   },
   emailVerifyTokenReuseIfValid: {
     env: 'PARSE_SERVER_EMAIL_VERIFY_TOKEN_REUSE_IF_VALID',
-    help: 'an existing password reset token should be reused when a password reset is requested',
+    help: 'an existing password reset token should be reused when resend verification is requested',
     action: parsers.booleanParser,
     default: false,
   },
@@ -383,6 +383,12 @@ module.exports.ParseServerOptions = {
     help: 'Disables console output',
     action: parsers.booleanParser,
   },
+  slowTracking: {
+    env: 'PARSE_SERVER_SLOW_TRACKING',
+    help: 'Options for timeout function tracking',
+    action: parsers.objectParser,
+    default: {},
+  },
   startLiveQueryServer: {
     env: 'PARSE_SERVER_START_LIVE_QUERY_SERVER',
     help: 'Starts the liveQuery server',
@@ -549,5 +555,13 @@ module.exports.IdempotencyOptions = {
       'The duration in seconds after which a request record is discarded from the database, defaults to 300s.',
     action: parsers.numberParser('ttl'),
     default: 300,
+  },
+};
+module.exports.SlowTrackingOptions = {
+  timeout: {
+    env: 'PARSE_SERVER_SLOW_TRACKING_TIMEOUT',
+    help: 'interval which functions should timeout',
+    action: parsers.numberParser('timeout'),
+    default: 20000,
   },
 };
