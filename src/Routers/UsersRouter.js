@@ -173,6 +173,33 @@ export class UsersRouter extends ClassesRouter {
   async handleLogIn(req) {
     const user = await this._authenticateUserFromRequest(req);
 
+    const authDataPromises = [];
+    let queryData = {};
+    try {
+      queryData = JSON.parse(req.query.authData);
+    } catch (e) {
+      /* */
+    }
+    if (user.authData) {
+      Object.keys(user.authData).forEach(provider => {
+        const validateAuthData = req.config.authDataManager.getLoginValidatorForProvider(provider);
+        if (validateAuthData) {
+          authDataPromises.push(
+            validateAuthData(
+              queryData[provider] || {},
+              Parse.User.fromJSON(Object.assign({ className: '_User' }, user))
+            )
+          );
+        }
+      });
+    }
+    if (authDataPromises.length != 0) {
+      try {
+        await Promise.all(authDataPromises);
+      } catch (e) {
+        throw new Parse.Error(Parse.Error.OBJECT_NOT_FOUND, (e && e.message) || e);
+      }
+    }
     // handle password expiry policy
     if (req.config.passwordPolicy && req.config.passwordPolicy.maxPasswordAge) {
       let changedAt = user._password_changed_at;

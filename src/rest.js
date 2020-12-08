@@ -219,7 +219,10 @@ function update(config, auth, className, restWhere, restObject, clientSDK, conte
 function handleSessionMissingError(error, className, auth) {
   // If we're trying to update a user without / with bad session token
   if (className === '_User' && error.code === Parse.Error.OBJECT_NOT_FOUND && !auth.isMaster) {
-    throw new Parse.Error(Parse.Error.SESSION_MISSING, 'Insufficient auth.');
+    throw new Parse.Error(
+      Parse.Error.SESSION_MISSING,
+      (error && error.message) || 'Insufficient auth.'
+    );
   }
   throw error;
 }

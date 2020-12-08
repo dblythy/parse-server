@@ -1,6 +1,6 @@
 /* @flow */
 
-import { randomBytes, createHash } from 'crypto';
+import { randomBytes, createHash, createCipheriv, createDecipheriv } from 'crypto';
 
 // Returns a new random hex string of the given even size.
 export function randomHexString(size: number): string {
@@ -44,4 +44,60 @@ export function newToken(): string {
 
 export function md5Hash(string: string): string {
   return createHash('md5').update(string).digest('hex');
+}
+
+export function encrypt(string: string, encryptionKey: string): string {
+  try {
+    const algorithm = 'aes-256-gcm';
+    const encryption = createHash('sha256')
+      .update(String(encryptionKey))
+      .digest('base64')
+      .substr(0, 32);
+    const iv = randomBytes(16);
+    const cipher = createCipheriv(algorithm, encryption, iv);
+    const encryptedResult = Buffer.concat([
+      cipher.update(Buffer.from(string)),
+      cipher.final(),
+      iv,
+      cipher.getAuthTag(),
+    ]);
+    return encryptedResult.toString('base64');
+  } catch (e) {
+    throw 'Could not encrypt string.';
+  }
+}
+export async function decrypt(string: string, encryptionKey: string) {
+  try {
+    const algorithm = 'aes-256-gcm';
+    const encryption = createHash('sha256')
+      .update(String(encryptionKey))
+      .digest('base64')
+      .substr(0, 32);
+    const data = Buffer.from(string, 'base64');
+    const authTagLocation = data.length - 16;
+    const ivLocation = data.length - 32;
+    const authTag = data.slice(authTagLocation);
+    const iv = data.slice(ivLocation, authTagLocation);
+    const encrypted = data.slice(0, ivLocation);
+    const decipher = createDecipheriv(algorithm, encryption, iv);
+    decipher.setAuthTag(authTag);
+    return await new Promise((resolve, reject) => {
+      let decrypted = '';
+      decipher.on('readable', chunk => {
+        while (null !== (chunk = decipher.read()) && chunk) {
+          decrypted += chunk.toString();
+        }
+      });
+      decipher.on('end', () => {
+        resolve(decrypted);
+      });
+      decipher.on('error', e => {
+        reject(e);
+      });
+      decipher.write(encrypted);
+      decipher.end();
+    });
+  } catch (err) {
+    throw 'Could not decrypt string.';
+  }
 }

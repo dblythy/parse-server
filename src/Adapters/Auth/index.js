@@ -7,6 +7,7 @@ const facebook = require('./facebook');
 const instagram = require('./instagram');
 const linkedin = require('./linkedin');
 const meetup = require('./meetup');
+const mfa = require('./mfa');
 const google = require('./google');
 const github = require('./github');
 const twitter = require('./twitter');
@@ -42,6 +43,7 @@ const providers = {
   instagram,
   linkedin,
   meetup,
+  mfa,
   google,
   github,
   twitter,
@@ -62,13 +64,22 @@ const providers = {
 };
 
 function authDataValidator(adapter, appIds, options) {
-  return function (authData) {
-    return adapter.validateAuthData(authData, options).then(() => {
+  return function (authData, user) {
+    return adapter.validateAuthData(authData, options, user).then(() => {
       if (appIds) {
         return adapter.validateAppId(appIds, authData, options);
       }
       return Promise.resolve();
     });
+  };
+}
+
+function loginAuthDataValidator(adapter, appIds, options) {
+  return function (authData, user) {
+    if (!adapter.loginWithAuthData) {
+      return;
+    }
+    return adapter.loginWithAuthData(authData, options, user);
   };
 }
 
@@ -92,11 +103,7 @@ function loadAuthAdapter(provider, authOptions) {
 
   // Try the configuration methods
   if (providerOptions) {
-    const optionalAdapter = loadAdapter(
-      providerOptions,
-      undefined,
-      providerOptions
-    );
+    const optionalAdapter = loadAdapter(providerOptions, undefined, providerOptions);
     if (optionalAdapter) {
       ['validateAuthData', 'validateAppId'].forEach(key => {
         if (optionalAdapter[key]) {
@@ -128,17 +135,24 @@ module.exports = function (authOptions = {}, enableAnonymousUsers = true) {
       return;
     }
 
-    const { adapter, appIds, providerOptions } = loadAuthAdapter(
-      provider,
-      authOptions
-    );
+    const { adapter, appIds, providerOptions } = loadAuthAdapter(provider, authOptions);
 
     return authDataValidator(adapter, appIds, providerOptions);
+  };
+  const getLoginValidatorForProvider = function (provider) {
+    if (provider === 'anonymous' && !_enableAnonymousUsers) {
+      return;
+    }
+
+    const { adapter, appIds, providerOptions } = loadAuthAdapter(provider, authOptions);
+
+    return loginAuthDataValidator(adapter, appIds, providerOptions);
   };
 
   return Object.freeze({
     getValidatorForProvider,
     setEnableAnonymousUsers,
+    getLoginValidatorForProvider,
   });
 };
 

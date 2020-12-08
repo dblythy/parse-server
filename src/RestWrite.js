@@ -405,6 +405,7 @@ RestWrite.prototype.validateAuthData = function () {
       var hasToken = providerAuthData && providerAuthData.id;
       return canHandle && (hasToken || providerAuthData == null);
     }, true);
+
     if (canHandleAuthData) {
       return this.handleAuthData(authData);
     }
@@ -415,7 +416,7 @@ RestWrite.prototype.validateAuthData = function () {
   );
 };
 
-RestWrite.prototype.handleAuthDataValidation = function (authData) {
+RestWrite.prototype.handleAuthDataValidation = function (authData, user) {
   const validations = Object.keys(authData).map(provider => {
     if (authData[provider] === null) {
       return Promise.resolve();
@@ -427,7 +428,7 @@ RestWrite.prototype.handleAuthDataValidation = function (authData) {
         'This authentication method is unsupported.'
       );
     }
-    return validateAuthData(authData[provider]);
+    return validateAuthData(authData[provider], user);
   });
   return Promise.all(validations);
 };
@@ -469,7 +470,6 @@ RestWrite.prototype.filteredObjectsByACL = function (objects) {
     return object.ACL && Object.keys(object.ACL).length > 0;
   });
 };
-
 RestWrite.prototype.handleAuthData = function (authData) {
   let results;
   return this.findUsersWithAuthData(authData).then(async r => {
@@ -523,7 +523,7 @@ RestWrite.prototype.handleAuthData = function (authData) {
         // that can happen when token are refreshed,
         // We should update the token and let the user in
         // We should only check the mutated keys
-        return this.handleAuthDataValidation(mutatedAuthData).then(async () => {
+        return this.handleAuthDataValidation(mutatedAuthData, this.auth.user).then(async () => {
           // IF we have a response, we'll skip the database operation / beforeSave / afterSave etc...
           // we need to set it up there.
           // We are supposed to have a response only on LOGIN with authData, so we skip those
@@ -557,7 +557,7 @@ RestWrite.prototype.handleAuthData = function (authData) {
         }
       }
     }
-    return this.handleAuthDataValidation(authData).then(() => {
+    return this.handleAuthDataValidation(authData, this.auth.user).then(() => {
       if (results.length > 1) {
         // More than 1 user with the passed id's
         throw new Parse.Error(Parse.Error.ACCOUNT_ALREADY_LINKED, 'this auth is already used');
