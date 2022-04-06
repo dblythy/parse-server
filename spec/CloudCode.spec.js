@@ -3466,7 +3466,7 @@ describe('saveFile hooks', () => {
     }
   });
 
-  fit('beforeSaveFile should return file that is already saved and not save anything to files adapter', async () => {
+  it('beforeSaveFile should return file that is already saved and not save anything to files adapter', async () => {
     await reconfigureServer({ filesAdapter: mockAdapter });
     const createFileSpy = spyOn(mockAdapter, 'createFile').and.callThrough();
     Parse.Cloud.beforeSaveFile(() => {
