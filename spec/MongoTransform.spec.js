@@ -497,6 +497,15 @@ describe('parseObjectToMongoObjectForCreate', () => {
     done();
   });
 
+  it('should throw error on transform', () => {
+    const input = {
+      field: [{ __type: 'Pointer', className: '_User', objectId: 'testID' }],
+    };
+    expect(() => transform.transformWhere(null, input)).toThrowError(
+      'You cannot use [{"__type":"Pointer","className":"_User","objectId":"testID"}] as a query parameter.'
+    );
+  });
+
   it('ignores User authData field in DB so it can be synthesized in code', done => {
     const input = {
       _id: '123',
