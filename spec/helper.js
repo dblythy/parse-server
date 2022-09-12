@@ -4,6 +4,7 @@ const semver = require('semver');
 const CurrentSpecReporter = require('./support/CurrentSpecReporter.js');
 const { SpecReporter } = require('jasmine-spec-reporter');
 const SchemaCache = require('../lib/Adapters/Cache/SchemaCache').default;
+const request = require('../lib/request');
 
 // Ensure localhost resolves to ipv4 address first on node v17+
 if (dns.setDefaultResultOrder) {
@@ -25,7 +26,13 @@ global.on_db = (db, callback, elseCallback) => {
     return elseCallback();
   }
 };
-
+global.requestWithExpectedError = async params => {
+  try {
+    return await request(params);
+  } catch (e) {
+    throw new Error(e.data.error);
+  }
+};
 if (global._babelPolyfill) {
   console.error('We should not use polyfilled tests');
   process.exit(1);
@@ -109,6 +116,7 @@ const defaultConfiguration = {
     enableForPublic: true,
     enableForAnonymousUser: true,
     enableForAuthenticatedUser: true,
+    fileTypes: '(.*?)',
   },
   push: {
     android: {
