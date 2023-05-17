@@ -243,16 +243,23 @@ export interface ParseServerOptions {
   /* Mount path for the server, defaults to /parse
   :DEFAULT: /parse */
   mountPath: ?string;
-  /* Run with cluster, optionally set the number of processes default to os.cpus().length */
+  /* Run with cluster, optionally set the number of processes default to os.cpus().length
+  :CLI_ONLY
+  */
   cluster: ?NumberOrBoolean;
-  /* middleware for express server, can be string or function */
+  /* middleware for express server, can be string or function.
+  :CLI_ONLY
+  */
   middleware: ?((() => void) | string);
-  /* The trust proxy settings. It is important to understand the exact setup of the reverse proxy, since this setting will trust values provided in the Parse Server API request. See the <a href="https://expressjs.com/en/guide/behind-proxies.html">express trust proxy settings</a> documentation. Defaults to `false`.
-  :DEFAULT: false */
+  /* The trust proxy settings. It is important to understand the exact setup of the reverse proxy, since this setting will trust values provided in the Parse Server API request. See the <a href="https://expressjs.com/en/guide/behind-proxies.html">express trust proxy settings</a> documentation. Defaults to `false`
+  :DEFAULT: false
+  :CLI_ONLY */
   trustProxy: ?any;
-  /* Starts the liveQuery server */
+  /* Starts the liveQuery server
+  :CLI_ONLY */
   startLiveQueryServer: ?boolean;
-  /* Live query server configuration options (will start the liveQuery server) */
+  /* Live query server configuration options (will start the liveQuery server)
+  :CLI_ONLY */
   liveQueryServerOptions: ?LiveQueryServerOptions;
   /* Options for request idempotency to deduplicate identical requests that may be caused by network issues. Caution, this is an experimental feature that may not be appropriate for production.
   :ENV: PARSE_SERVER_EXPERIMENTAL_IDEMPOTENCY_OPTIONS
@@ -270,7 +277,8 @@ export interface ParseServerOptions {
   mountGraphQL: ?boolean;
   /* Mount path for the GraphQL endpoint, defaults to /graphql
   :ENV: PARSE_SERVER_GRAPHQL_PATH
-  :DEFAULT: /graphql */
+  :DEFAULT: /graphql
+  :CLI_ONLY */
   graphQLPath: ?string;
   /* Mounts the GraphQL Playground - never use this option in production
   :ENV: PARSE_SERVER_MOUNT_PLAYGROUND
@@ -278,7 +286,8 @@ export interface ParseServerOptions {
   mountPlayground: ?boolean;
   /* Mount path for the GraphQL Playground, defaults to /playground
   :ENV: PARSE_SERVER_PLAYGROUND_PATH
-  :DEFAULT: /playground */
+  :DEFAULT: /playground
+  :CLI_ONLY */
   playgroundPath: ?string;
   /* Defined schema
   :ENV: PARSE_SERVER_SCHEMA

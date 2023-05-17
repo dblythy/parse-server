@@ -95,11 +95,14 @@ function processProperty(property, iface) {
   let help = '';
   let envLine;
   let defaultLine;
+  let cliOnly;
   lines.forEach(line => {
     if (line.indexOf(':ENV:') === 0) {
       envLine = line;
     } else if (line.indexOf(':DEFAULT:') === 0) {
       defaultLine = line;
+    } else if (line.indexOf(':CLI_ONLY') === 0) {
+      cliOnly = true
     } else {
       help += line;
     }
@@ -121,6 +124,12 @@ function processProperty(property, iface) {
   if (type == 'NullableTypeAnnotation') {
     isRequired = false;
     type = property.value.typeAnnotation.type;
+  }
+  if (cliOnly) {
+    if (help.at(-1) !== '.') {
+      help += '.';
+    }
+    help += ' Note: this option only applies when Parse Server is started via CLI.';
   }
   return {
     name,

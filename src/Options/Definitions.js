@@ -132,7 +132,8 @@ module.exports.ParseServerOptions = {
   },
   cluster: {
     env: 'PARSE_SERVER_CLUSTER',
-    help: 'Run with cluster, optionally set the number of processes default to os.cpus().length',
+    help:
+      'Run with cluster, optionally set the number of processes default to os.cpus().length. Note: this option only applies when Parse Server is started via CLI.',
     action: parsers.numberOrBooleanParser,
   },
   collectionPrefix: {
@@ -244,7 +245,8 @@ module.exports.ParseServerOptions = {
   },
   graphQLPath: {
     env: 'PARSE_SERVER_GRAPHQL_PATH',
-    help: 'Mount path for the GraphQL endpoint, defaults to /graphql',
+    help:
+      'Mount path for the GraphQL endpoint, defaults to /graphql. Note: this option only applies when Parse Server is started via CLI.',
     default: '/graphql',
   },
   graphQLSchema: {
@@ -279,7 +281,8 @@ module.exports.ParseServerOptions = {
   },
   liveQueryServerOptions: {
     env: 'PARSE_SERVER_LIVE_QUERY_SERVER_OPTIONS',
-    help: 'Live query server configuration options (will start the liveQuery server)',
+    help:
+      'Live query server configuration options (will start the liveQuery server). Note: this option only applies when Parse Server is started via CLI.',
     action: parsers.objectParser,
   },
   loggerAdapter: {
@@ -345,7 +348,8 @@ module.exports.ParseServerOptions = {
   },
   middleware: {
     env: 'PARSE_SERVER_MIDDLEWARE',
-    help: 'middleware for express server, can be string or function',
+    help:
+      'middleware for express server, can be string or function. Note: this option only applies when Parse Server is started via CLI.',
   },
   mountGraphQL: {
     env: 'PARSE_SERVER_MOUNT_GRAPHQL',
@@ -384,7 +388,8 @@ module.exports.ParseServerOptions = {
   },
   playgroundPath: {
     env: 'PARSE_SERVER_PLAYGROUND_PATH',
-    help: 'Mount path for the GraphQL Playground, defaults to /playground',
+    help:
+      'Mount path for the GraphQL Playground, defaults to /playground. Note: this option only applies when Parse Server is started via CLI.',
     default: '/playground',
   },
   port: {
@@ -505,13 +510,14 @@ module.exports.ParseServerOptions = {
   },
   startLiveQueryServer: {
     env: 'PARSE_SERVER_START_LIVE_QUERY_SERVER',
-    help: 'Starts the liveQuery server',
+    help:
+      'Starts the liveQuery server. Note: this option only applies when Parse Server is started via CLI.',
     action: parsers.booleanParser,
   },
   trustProxy: {
     env: 'PARSE_SERVER_TRUST_PROXY',
     help:
-      'The trust proxy settings. It is important to understand the exact setup of the reverse proxy, since this setting will trust values provided in the Parse Server API request. See the <a href="https://expressjs.com/en/guide/behind-proxies.html">express trust proxy settings</a> documentation. Defaults to `false`.',
+      'The trust proxy settings. It is important to understand the exact setup of the reverse proxy, since this setting will trust values provided in the Parse Server API request. See the <a href="https://expressjs.com/en/guide/behind-proxies.html">express trust proxy settings</a> documentation. Defaults to `false`. Note: this option only applies when Parse Server is started via CLI.',
     action: parsers.objectParser,
     default: [],
   },

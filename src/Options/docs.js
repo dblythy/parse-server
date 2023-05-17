@@ -26,7 +26,7 @@
  * @property {Number} cacheTTL Sets the TTL for the in memory cache (in ms), defaults to 5000 (5 seconds)
  * @property {String} clientKey Key for iOS, MacOS, tvOS clients
  * @property {String} cloud Full path to your cloud code main.js
- * @property {Number|Boolean} cluster Run with cluster, optionally set the number of processes default to os.cpus().length
+ * @property {Number|Boolean} cluster Run with cluster, optionally set the number of processes default to os.cpus().length. Note: this option only applies when Parse Server is started via CLI.
  * @property {String} collectionPrefix A collection prefix for the classes
  * @property {CustomPagesOptions} customPages custom pages for password validation and reset
  * @property {Adapter<StorageAdapter>} databaseAdapter Adapter module for the database; any options that are not explicitly described here are passed directly to the database client.
@@ -46,14 +46,14 @@
  * @property {String} fileKey Key for your files
  * @property {Adapter<FilesAdapter>} filesAdapter Adapter module for the files sub-system
  * @property {FileUploadOptions} fileUpload Options for file uploads
- * @property {String} graphQLPath Mount path for the GraphQL endpoint, defaults to /graphql
+ * @property {String} graphQLPath Mount path for the GraphQL endpoint, defaults to /graphql. Note: this option only applies when Parse Server is started via CLI.
  * @property {String} graphQLSchema Full path to your GraphQL custom schema.graphql file
  * @property {String} host The host to serve ParseServer on, defaults to 0.0.0.0
  * @property {IdempotencyOptions} idempotencyOptions Options for request idempotency to deduplicate identical requests that may be caused by network issues. Caution, this is an experimental feature that may not be appropriate for production.
  * @property {String} javascriptKey Key for the Javascript SDK
  * @property {Boolean} jsonLogs Log as structured JSON objects
  * @property {LiveQueryOptions} liveQuery parse-server's LiveQuery configuration object
- * @property {LiveQueryServerOptions} liveQueryServerOptions Live query server configuration options (will start the liveQuery server)
+ * @property {LiveQueryServerOptions} liveQueryServerOptions Live query server configuration options (will start the liveQuery server). Note: this option only applies when Parse Server is started via CLI.
  * @property {Adapter<LoggerAdapter>} loggerAdapter Adapter module for the logging sub-system
  * @property {String} logLevel Sets the level for logs
  * @property {LogLevels} logLevels (Optional) Overrides the log levels used internally by Parse Server to log events.
@@ -65,14 +65,14 @@
  * @property {Number} maxLimit Max value for limit option on queries, defaults to unlimited
  * @property {Number|String} maxLogFiles Maximum number of logs to keep. If not set, no logs will be removed. This can be a number of files or number of days. If using days, add 'd' as the suffix. (default: null)
  * @property {String} maxUploadSize Max file size for uploads, defaults to 20mb
- * @property {Union} middleware middleware for express server, can be string or function
+ * @property {Union} middleware middleware for express server, can be string or function. Note: this option only applies when Parse Server is started via CLI.
  * @property {Boolean} mountGraphQL Mounts the GraphQL endpoint
  * @property {String} mountPath Mount path for the server, defaults to /parse
  * @property {Boolean} mountPlayground Mounts the GraphQL Playground - never use this option in production
  * @property {Number} objectIdSize Sets the number of characters in generated object id's, default 10
  * @property {PagesOptions} pages The options for pages such as password reset and email verification. Caution, this is an experimental feature that may not be appropriate for production.
  * @property {PasswordPolicyOptions} passwordPolicy The password policy for enforcing password related rules.
- * @property {String} playgroundPath Mount path for the GraphQL Playground, defaults to /playground
+ * @property {String} playgroundPath Mount path for the GraphQL Playground, defaults to /playground. Note: this option only applies when Parse Server is started via CLI.
  * @property {Number} port The port to run the ParseServer, defaults to 1337.
  * @property {Boolean} preserveFileName Enable (or disable) the addition of a unique hash to the file names
  * @property {Boolean} preventLoginWithUnverifiedEmail Set to `true` to prevent a user from logging in if the email has not yet been verified and email verification is required.<br><br>Default is `false`.<br>Requires option `verifyUserEmails: true`.
@@ -91,8 +91,8 @@
  * @property {String} serverURL URL to your parse server with http:// or https://.
  * @property {Number} sessionLength Session duration, in seconds, defaults to 1 year
  * @property {Boolean} silent Disables console output
- * @property {Boolean} startLiveQueryServer Starts the liveQuery server
- * @property {Any} trustProxy The trust proxy settings. It is important to understand the exact setup of the reverse proxy, since this setting will trust values provided in the Parse Server API request. See the <a href="https://expressjs.com/en/guide/behind-proxies.html">express trust proxy settings</a> documentation. Defaults to `false`.
+ * @property {Boolean} startLiveQueryServer Starts the liveQuery server. Note: this option only applies when Parse Server is started via CLI.
+ * @property {Any} trustProxy The trust proxy settings. It is important to understand the exact setup of the reverse proxy, since this setting will trust values provided in the Parse Server API request. See the <a href="https://expressjs.com/en/guide/behind-proxies.html">express trust proxy settings</a> documentation. Defaults to `false`. Note: this option only applies when Parse Server is started via CLI.
  * @property {String[]} userSensitiveFields Personally identifiable information fields in the user table the should be removed for non-authorized users. Deprecated @see protectedFields
  * @property {Boolean} verbose Set the logging to verbose
  * @property {Boolean} verifyUserEmails Set to `true` to require users to verify their email address to complete the sign-up process.<br><br>Default is `false`.
