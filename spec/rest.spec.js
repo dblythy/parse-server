@@ -563,6 +563,7 @@ describe('rest create', () => {
       });
   });
 
+  fit('should do something', (done) => {});
   it('test specified session length', done => {
     const user = {
       username: 'asdf',

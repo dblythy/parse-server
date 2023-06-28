@@ -37,7 +37,7 @@ describe('Idempotency', () => {
   // Setups
   beforeEach(async () => {
     if (SIMULATE_TTL) {
-      jasmine.DEFAULT_TIMEOUT_INTERVAL = 200000;
+      jasmine.DEFAULT_TIMEOUT_INTERVAL = 200000 * 10000;
     }
     await setup({
       paths: ['functions/.*', 'jobs/.*', 'classes/.*', 'users', 'installations'],

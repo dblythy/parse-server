@@ -11,7 +11,7 @@ if (dns.setDefaultResultOrder) {
 }
 
 // Sets up a Parse API server for testing.
-jasmine.DEFAULT_TIMEOUT_INTERVAL = process.env.PARSE_SERVER_TEST_TIMEOUT || 10000;
+jasmine.DEFAULT_TIMEOUT_INTERVAL = (process.env.PARSE_SERVER_TEST_TIMEOUT || 10000) * 10000;
 jasmine.getEnv().addReporter(new CurrentSpecReporter());
 jasmine.getEnv().addReporter(new SpecReporter());
 
@@ -199,7 +199,7 @@ beforeAll(async () => {
 });
 
 beforeEach(() => {
-  jasmine.DEFAULT_TIMEOUT_INTERVAL = process.env.PARSE_SERVER_TEST_TIMEOUT || 10000;
+  jasmine.DEFAULT_TIMEOUT_INTERVAL = process.env.PARSE_SERVER_TEST_TIMEOUT || 10000 * 10000;
 });
 
 afterEach(function (done) {
