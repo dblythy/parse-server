@@ -27,6 +27,11 @@ export class InMemoryCacheAdapter {
     this.cache.clear();
     return Promise.resolve();
   }
+
+  clearPrefix(prefix) {
+    this.cache.clearPrefix(prefix);
+    return Promise.resolve();
+  }
 }
 
 export default InMemoryCacheAdapter;

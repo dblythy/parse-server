@@ -24,6 +24,14 @@ export class LRUCache {
   clear() {
     this.cache.clear();
   }
+
+  clearPrefix(prefix) {
+    for (const key of [...this.cache.keys()]) {
+      if (key.startsWith(prefix)) {
+        this.cache.delete(key);
+      }
+    }
+  }
 }
 
 export default LRUCache;

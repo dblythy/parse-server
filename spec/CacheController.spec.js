@@ -67,4 +67,34 @@ describe('CacheController', function () {
       fail('Promise should not be rejected.');
     });
   });
+
+  it('should scope a sub cache clear to its prefix when the adapter supports it', () => {
+    FakeCacheAdapter.clearPrefix = jasmine.createSpy('clearPrefix');
+    const cache = new CacheController(FakeCacheAdapter, FakeAppID);
+
+    cache.role.clear();
+    expect(FakeCacheAdapter.clearPrefix).toHaveBeenCalledWith('foo:role:');
+    expect(FakeCacheAdapter.clear).not.toHaveBeenCalled();
+
+    cache.user.clear();
+    expect(FakeCacheAdapter.clearPrefix).toHaveBeenCalledWith('foo:user:');
+
+    cache.clear();
+    expect(FakeCacheAdapter.clear.calls.count()).toEqual(1);
+  });
+
+  it('should not clear the user cache when the role cache is cleared', async () => {
+    const InMemoryCacheAdapter = require('../lib/Adapters/Cache/InMemoryCacheAdapter').default;
+    const cache = new CacheController(new InMemoryCacheAdapter({}), FakeAppID);
+
+    await cache.user.put('sessionToken1', 'user1');
+    await cache.role.put('user1', ['role1']);
+    await cache.role.clear();
+
+    expect(await cache.user.get('sessionToken1')).toEqual('user1');
+    expect(await cache.role.get('user1')).toEqual(null);
+
+    await cache.user.clear();
+    expect(await cache.user.get('sessionToken1')).toEqual(null);
+  });
 });

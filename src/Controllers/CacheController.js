@@ -35,7 +35,7 @@ export class SubCache {
   }
 
   clear() {
-    return this.cache.clear();
+    return this.cache.clear(this.prefix);
   }
 }
 
@@ -63,7 +63,11 @@ export class CacheController extends AdaptableController {
     return this.adapter.del(cacheKey);
   }
 
-  clear() {
+  clear(prefix) {
+    if (prefix && typeof this.adapter.clearPrefix === 'function') {
+      // Scoped clear, e.g. a _Role write must not wipe cached user sessions
+      return this.adapter.clearPrefix(joinKeys(this.appId, prefix) + KEY_SEPARATOR_CHAR);
+    }
     return this.adapter.clear();
   }
 

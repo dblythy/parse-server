@@ -86,6 +86,19 @@ export class RedisCacheAdapter {
     return this.client.sendCommand(['FLUSHDB']);
   }
 
+  async clearPrefix(prefix) {
+    debug('clearPrefix', { prefix });
+    await this.queue.enqueue(FLUSH_DB_KEY);
+    // Escape glob special characters so the prefix matches literally
+    const pattern = `${prefix.replace(/[*?[\]\\]/g, '\\$&')}*`;
+    for await (const keys of this.client.scanIterator({ MATCH: pattern, COUNT: 100 })) {
+      const batch = Array.isArray(keys) ? keys : [keys];
+      if (batch.length) {
+        await this.client.del(batch);
+      }
+    }
+  }
+
   // Used for testing
   getAllKeys() {
     return this.client.keys('*');

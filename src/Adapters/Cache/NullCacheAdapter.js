@@ -18,6 +18,10 @@ export class NullCacheAdapter {
   clear() {
     return Promise.resolve();
   }
+
+  clearPrefix() {
+    return Promise.resolve();
+  }
 }
 
 export default NullCacheAdapter;
