@@ -294,10 +294,24 @@ class ParseGraphQLServer {
           // We need always true introspection because apollo server have changing behavior based on the NODE_ENV variable
           // we delegate the introspection control to the IntrospectionControlPlugin
           introspection: true,
+          // Parse Server manages its own lifecycle; Apollo's signal handlers
+          // would permanently retain every replaced server instance (#9813)
+          stopOnTerminationSignals: false,
           plugins: [ApolloServerPluginCacheControlDisabled(), IntrospectionControlPlugin(this.config.graphQLPublicIntrospection), SchemaSuggestionsControlPlugin(this.config.graphQLPublicIntrospection), createComplexityValidationPlugin(() => this.parseServer.config.requestComplexity)],
           schema,
         });
         await apollo.start();
+        const previousApollo = this._apollo;
+        this._apollo = apollo;
+        if (previousApollo) {
+          // Delay so in-flight requests on the replaced middleware can finish
+          const stopDelay = setTimeout(() => {
+            previousApollo.stop().catch(error => {
+              defaultLogger.error(`Error stopping replaced Apollo server: ${error}`);
+            });
+          }, 10000);
+          stopDelay.unref?.();
+        }
         return expressMiddleware(apollo, {
           context,
         });

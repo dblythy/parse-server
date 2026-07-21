@@ -54,6 +54,27 @@ describe('ParseGraphQLSchema', () => {
       expect(graphQLSchema).toBe(updatedGraphQLSchema);
     });
 
+    it('should not rebuild the schema when only ignored _auth_data_ fields differ', async () => {
+      const graphQLSchema = await parseGraphQLSchema.load();
+      // Simulate a schema cache refresh followed by an authData write, which
+      // adds an in-memory _auth_data_ field to the newly cached _User schema
+      // (transformAuthData); it must not count as a schema change (#9813)
+      await parseServer.config.schemaCache.clear();
+      const schemaController = await databaseController.loadSchema();
+      const userClass = await schemaController.getOneSchema('_User');
+      userClass.fields._auth_data_anonymous = { type: 'Object' };
+      const updatedGraphQLSchema = await parseGraphQLSchema.load();
+      expect(graphQLSchema).toBe(updatedGraphQLSchema);
+    });
+
+    it('should not mutate the schema cache classes when loading', async () => {
+      const schemaController = await databaseController.loadSchema();
+      const userClass = await schemaController.getOneSchema('_User');
+      userClass.fields._auth_data_anonymous = { type: 'Object' };
+      await parseGraphQLSchema.load();
+      expect(userClass.fields._auth_data_anonymous).toEqual({ type: 'Object' });
+    });
+
     it('should load a brand new GraphQL Schema if Parse Schema changes', async () => {
       await parseGraphQLSchema.load();
       const parseClasses = parseGraphQLSchema.parseClasses;

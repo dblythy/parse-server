@@ -95,7 +95,24 @@ class ParseGraphQLSchema {
 
   async load() {
     const { parseGraphQLConfig } = await this._initializeSchemaAndConfig();
-    const parseClassesArray = await this._getClassesForSchema(parseGraphQLConfig);
+    // Clone the classes before normalizing; the class objects are shared with
+    // the schema cache. Strip inputs the GraphQL schema does not depend on
+    // before the change comparison - `_auth_data_*` fields (added in-memory on
+    // every authData write) and `indexes` - or the schema looks changed on
+    // every reload and rebuilds forever (#9813).
+    const parseClassesArray = (await this._getClassesForSchema(parseGraphQLConfig)).map(clazz => {
+      const fields = { ...clazz.fields };
+      if (clazz.className === '_User') {
+        Object.keys(fields).forEach(fieldName => {
+          if (fieldName.startsWith('_auth_data_')) {
+            delete fields[fieldName];
+          }
+        });
+      }
+      const normalized = { ...clazz, fields };
+      delete normalized.indexes;
+      return normalized;
+    });
     const functionNames = await this._getFunctionNames();
     const functionNamesString = functionNames.join();
 
@@ -136,16 +153,6 @@ class ParseGraphQLSchema {
 
     this._getParseClassesWithConfig(parseClassesArray, parseGraphQLConfig).forEach(
       ([parseClass, parseClassConfig]) => {
-        // Some times schema return the _auth_data_ field
-        // it will lead to unstable graphql generation order
-        if (parseClass.className === '_User') {
-          Object.keys(parseClass.fields).forEach(fieldName => {
-            if (fieldName.startsWith('_auth_data_')) {
-              delete parseClass.fields[fieldName];
-            }
-          });
-        }
-
         // Fields order inside the schema seems to not be consistent across
         // restart so we need to ensure an alphabetical order
         // also it's better for the playground documentation
